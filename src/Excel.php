@@ -11,17 +11,33 @@ namespace ocean\excel;
 
 class Excel
 {
-    public $PHPExcel;               //一个excel对象
+    public $PHPExcel;                   //一个excel对象
 
-    public $properties;             //关于excel属性操作的对象
+    public $properties;                 //关于excel属性操作的对象
 
-    public $valid_colum_arr;      //有效列
+    public $valid_colum_arr;            //有效列
+
+    public $sharedStyle;                //设置单元格的样式
 
     public function __construct()
     {
-        $this->valid_colum_arr=range('A','Z');
+        $this->valid_colum_arr = range('A', 'Z');
         $this->PHPExcel = new \PHPExcel();
         $this->properties = $this->PHPExcel->getProperties();
+        $this->sharedStyle = new \PHPExcel_Style();
+
+        $this->sharedStyle->applyFromArray(
+            array(
+                'borders' => array(
+                    'allborders' => array(
+                        'style' => \PHPExcel_Style_Border::BORDER_THIN
+                    )
+                ),
+                'alignment' => array(
+                    'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+                ),
+            )
+        );
     }
 
 
@@ -46,7 +62,7 @@ class Excel
 
 
     /**
-     * 获取第几个sheet
+     * 获取第几个sheet操作对象
      * @param $i
      */
     public function getSheet($i)
@@ -56,18 +72,18 @@ class Excel
 
         //要选择的sheet已经存在了
         if ($i >= $count) {
-            for($a=$count;$a<=$i;$a++){
+            for ($a = $count; $a <= $i; $a++) {
                 $this->PHPExcel->createSheet($a);
             }
         }
-        
+
         $this->PHPExcel->setActiveSheetIndex($i);
+        $this->PHPExcel->getActiveSheet()->getDefaultColumnDimension()->setWidth(21);
+        $this->PHPExcel->getActiveSheet()->getDefaultRowDimension()->setRowHeight(15);
+        $this->PHPExcel->getActiveSheet()->freezePane('A2');
+
         return $this->PHPExcel->getActiveSheet();
     }
-
-
-
-
 
 
     //以下是基于活动sheet的操作

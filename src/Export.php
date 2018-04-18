@@ -43,10 +43,13 @@ class Export extends Excel
     private function setFirstRowStyle()
     {
         $activeSheet=$this->PHPExcel->getActiveSheet();
+        $this->PHPExcel->getActiveSheet()->setSharedStyle($this->sharedStyle, "A1:".$this->valid_colum_arr[$this->_colum_number-1].'1');
         for($i=0;$i<$this->_colum_number;$i++){
-            $activeSheet->getStyle($this->valid_colum_arr[$i].'1')->getFont()->setBlod(true);
+            $activeSheet->getStyle($this->valid_colum_arr[$i].'1')->getFont()->setBold(true);
+            $activeSheet->getStyle($this->valid_colum_arr[$i].'1')->getFont()->setSize(12);
+            $activeSheet->getStyle($this->valid_colum_arr[$i].'1')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            $activeSheet->getStyle($this->valid_colum_arr[$i].'1')->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
         }
-
     }
 
 
@@ -56,10 +59,14 @@ class Export extends Excel
      */
     public function loadData($data)
     {
+        array_unshift($data,$this->_header);
         if(is_array($data)){
             $this->_data=$data;
+            $this->PHPExcel->getActiveSheet()->setSharedStyle($this->sharedStyle, "A2:".$this->valid_colum_arr[$this->_colum_number-1].count($this->_data));
+            $this->PHPExcel->getActiveSheet()->fromArray($data);
             return $this;
         }
     }
+
 
 }
